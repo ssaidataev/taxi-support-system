@@ -1,0 +1,218 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Support System API",
+        "description": "API для системы поддержки",
+        "contact": {
+            "email": "support@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/admin/support-requests": {
+            "get": {
+                "tags": [
+                    "AdminSupportRequests"
+                ],
+                "summary": "Получить список всех обращений",
+                "operationId": "be4964cc2461a4701eab8feb67120a59",
+                "responses": {
+                    "200": {
+                        "description": "Список всех обращений",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SupportRequest"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/support-requests/{id}/attach-order": {
+            "post": {
+                "tags": [
+                    "AdminSupportRequests"
+                ],
+                "summary": "Закрепить заказ за обращением",
+                "operationId": "f8605d7e897a6b6a5d235d54b5bef201",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID обращения",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "order_id"
+                                ],
+                                "properties": {
+                                    "order_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Заказ успешно закреплен за обращением"
+                    },
+                    "404": {
+                        "description": "Заказ не найден"
+                    }
+                }
+            }
+        },
+        "/api/messages/{supportRequestId}": {
+            "get": {
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Получить все сообщения по обращению",
+                "operationId": "74c6dd1220d4480e1ebb77ca811759f8",
+                "parameters": [
+                    {
+                        "name": "supportRequestId",
+                        "in": "path",
+                        "description": "ID обращения",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список сообщений",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Message"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/support-requests": {
+            "post": {
+                "tags": [
+                    "SupportRequests"
+                ],
+                "summary": "Создать новое обращение",
+                "operationId": "0c7ceb2fe1618dec65a960b6426746ba",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "type"
+                                ],
+                                "properties": {
+                                    "type": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "order_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Создано новое обращение",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SupportRequest"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Message": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "support_request_id": {
+                        "type": "integer"
+                    },
+                    "user_id": {
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "SupportRequest": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "user_id": {
+                        "type": "integer"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "order_id": {
+                        "type": "integer"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "AdminSupportRequests",
+            "description": "Операции с обращениями для администраторов"
+        },
+        {
+            "name": "Messages",
+            "description": "Операции с сообщениями поддержки"
+        },
+        {
+            "name": "SupportRequests",
+            "description": "Операции с обращениями поддержки"
+        }
+    ]
+}
