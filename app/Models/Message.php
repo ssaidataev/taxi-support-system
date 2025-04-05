@@ -20,6 +20,8 @@ class Message extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['support_request_id', 'user_id', 'message'];
+
     public function supportRequest(): BelongsTo
     {
         return $this->belongsTo(SupportRequest::class);

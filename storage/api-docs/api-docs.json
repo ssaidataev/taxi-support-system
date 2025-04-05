@@ -110,32 +110,149 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Обращение не найдено"
                     }
                 }
             }
         },
         "/api/support-requests": {
+            "get": {
+                "tags": [
+                    "SupportRequests"
+                ],
+                "summary": "Получить список всех обращений",
+                "operationId": "b6f7aea71b8ba829545483ab5b4120cf",
+                "responses": {
+                    "200": {
+                        "description": "Список обращений",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SupportRequest"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/support-requests/{id}": {
+            "get": {
+                "tags": [
+                    "SupportRequests"
+                ],
+                "summary": "Получить конкретное обращение",
+                "operationId": "03a8fa157c8014dcf325bd41d276e0a9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID обращения",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Обращение найдено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SupportRequest"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Обращение не найдено"
+                    }
+                }
+            }
+        },
+        "/api/support-requests/{supportRequestId}/messages": {
             "post": {
                 "tags": [
                     "SupportRequests"
                 ],
-                "summary": "Создать новое обращение",
-                "operationId": "0c7ceb2fe1618dec65a960b6426746ba",
+                "summary": "Ответить на обращение",
+                "operationId": "703a4642086acb5b916bd78f3e12038b",
+                "parameters": [
+                    {
+                        "name": "supportRequestId",
+                        "in": "path",
+                        "description": "ID обращения",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "type"
+                                    "message"
                                 ],
                                 "properties": {
-                                    "type": {
+                                    "message": {
                                         "type": "string"
-                                    },
-                                    "description": {
-                                        "type": "string"
-                                    },
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Сообщение добавлено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Message"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/support-requests/{id}/attach-order": {
+            "post": {
+                "tags": [
+                    "SupportRequests"
+                ],
+                "summary": "Закрепить заказ за обращением",
+                "operationId": "286bdb1534351f463130c09d90acc7ed",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID обращения",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "order_id"
+                                ],
+                                "properties": {
                                     "order_id": {
                                         "type": "integer"
                                     }
@@ -146,8 +263,8 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "description": "Создано новое обращение",
+                    "200": {
+                        "description": "Заказ прикреплен",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -155,6 +272,9 @@
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Обращение или заказ не найдены"
                     }
                 }
             }
@@ -199,6 +319,14 @@
                 },
                 "type": "object"
             }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Введите токен в формате \"Bearer {токен}\""
+            }
         }
     },
     "tags": [
@@ -213,6 +341,11 @@
         {
             "name": "SupportRequests",
             "description": "Операции с обращениями поддержки"
+        }
+    ],
+    "security": [
+        {
+            "bearerAuth": []
         }
     ]
 }

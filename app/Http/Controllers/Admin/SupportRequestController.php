@@ -64,19 +64,26 @@ class SupportRequestController extends Controller
      */
     public function attachOrder(Request $request, $id)
     {
+        $request->validate([
+            'order_id' => 'required|exists:orders,id',
+        ]);
+
         $supportRequest = SupportRequest::findOrFail($id);
+
         $order = Order::find($request->order_id);
 
-        if ($order) {
-            $supportRequest->order()->associate($order);
-            $supportRequest->save();
-
-            return response()->json([
-                'message' => 'Order successfully attached to the support request.',
-                'support_request' => $supportRequest,
-            ]);
+        if (!$order) {
+            return response()->json(['error' => 'Order not found.'], 404);
         }
 
-        return response()->json(['error' => 'Order not found.'], 404);
+        // Прикрепляем заказ к обращению
+        $supportRequest->order()->associate($order);
+        $supportRequest->save();
+
+        return response()->json([
+            'message' => 'Order successfully attached to the support request.',
+            'support_request' => $supportRequest,
+        ]);
     }
+
 }
